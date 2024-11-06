@@ -7,10 +7,11 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using VerificationProvider.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using VerificationProvider.Inferfaces;
 
 namespace VerificationProvider.Services;
 
-public class VerificationService(ILogger<VerificationService> logger, IServiceProvider serviceProvider)
+public class VerificationService(ILogger<VerificationService> logger, IServiceProvider serviceProvider) : IVerificationService
 {
     private readonly ILogger<VerificationService> _logger = logger;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
@@ -100,7 +101,7 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
             _logger.LogError($"ERROR : GenerateVerificationCode.SaveVerificationRequest :: {ex.Message}");
         }
         return false;
-        
+
     }
 
     public string GenerateServiceBusEmailRequest(EmailRequest emailRequest)
@@ -118,7 +119,7 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
             _logger.LogError($"ERROR : GenerateVerificationCode.GenerateServiceBusEmailRequest :: {ex.Message}");
         }
         return null!;
-        
+
 
     }
 }

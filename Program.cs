@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using VerificationProvider.Data.Context;
+using VerificationProvider.Inferfaces;
+using VerificationProvider.Services;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -22,7 +24,12 @@ var host = new HostBuilder()
         }
 
         services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+
+        services.AddScoped<IVerificationService, VerificationService>();
+        services.AddScoped<IVerificationCleanerService, VerificationCleanerService>();
+        services.AddScoped<IValidateVerificationCodeService, ValidateVerificationCodeService>();
     })
+
     .Build();
 
 using (var scope = host.Services.CreateScope())
