@@ -14,22 +14,26 @@ var host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+        services.AddDbContextFactory<DataContext>(options =>
+            options.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
 
-        var configuration = context.Configuration;
-        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DefaultConnection");
+        //var configuration = context.Configuration;
+        //var connectionString = configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DefaultConnection");
 
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException("The connection string property has not been initialized.");
-        }
+        //Console.WriteLine($"Connection String: {connectionString}");
 
-        services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+        //if (string.IsNullOrEmpty(connectionString))
+        //{
+        //    throw new InvalidOperationException("The connection string property has not been initialized.");
+        //}
+
+        //services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
 
         services.AddScoped<IVerificationService, VerificationService>();
         services.AddScoped<IVerificationCleanerService, VerificationCleanerService>();
         services.AddScoped<IValidateVerificationCodeService, ValidateVerificationCodeService>();
     })
-
+     
     .Build();
 
 using (var scope = host.Services.CreateScope())

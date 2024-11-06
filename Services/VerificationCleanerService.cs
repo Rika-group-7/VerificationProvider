@@ -15,7 +15,7 @@ public class VerificationCleanerService(ILogger<VerificationCleanerService> logg
     {
         try
         {
-            var expired = _dataConext.verificationRequest.Where(x => x.ExpirationDate <= DateTime.UtcNow).ToListAsync();
+            var expired = await _dataConext.verificationRequest.Where(x => x.ExpirationDate <= DateTime.UtcNow).ToListAsync();
             _dataConext.RemoveRange(expired);
             await _dataConext.SaveChangesAsync();
         }
