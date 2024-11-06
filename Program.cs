@@ -1,7 +1,10 @@
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
+using VerificationProvider.Data.Context;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -12,7 +15,31 @@ var host = new HostBuilder()
 
         var configuration = context.Configuration;
         var connectionString = configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DefaultConnection");
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("The connection string property has not been initialized.");
+        }
+
+        services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
     })
     .Build();
 
-host.Run();
+using (var scope = host.Services.CreateScope())
+{
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+        var migrations = context.Database.GetPendingMigrations();
+        if (migrations != null && migrations.Any())
+        {
+            context.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"Error : program.cs - Migration of database :: {ex.Message}");
+    }
+}
+
+    host.Run();
