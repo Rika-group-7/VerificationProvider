@@ -7,9 +7,9 @@ using VerificationProvider.Inferfaces;
 
 namespace VerificationProvider.Functions;
 
-public class ValidateVerificationCode(ILogger logger, IValidateVerificationCodeService service)
+public class ValidateVerificationCode(ILogger<ValidateVerificationCode> logger, IValidateVerificationCodeService service)
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger<ValidateVerificationCode> _logger = logger;
     private readonly IValidateVerificationCodeService _service = service;
 
     [Function("ValidateVerificationCode")]

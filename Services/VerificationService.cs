@@ -62,11 +62,72 @@ public class VerificationService(ILogger<VerificationService> logger, IServicePr
                 var emailRequest = new EmailRequest()
                 {
                     To = verificationRequest.Email,
-                    Subjet = $"Verification Code {code}",
-                    Body = $@"<html>Email: {verificationRequest.Email} Code: {code}</html>",
+                    Subject = $"Verification Code {code}",
+                    Body = $@"
+                                <html>
+                                <head>
+                                    <style>
+                                        .container {{
+                                            font-family: Arial, sans-serif;
+                                            max-width: 600px;
+                                            margin: 0 auto;
+                                            padding: 20px;
+                                            border: 1px solid #e0e0e0;
+                                            border-radius: 8px;
+                                            background-color: #f9f9f9;
+                                        }}
+                                        .header {{
+                                            font-size: 24px;
+                                            font-weight: bold;
+                                            color: #333333;
+                                            text-align: center;
+                                            margin-bottom: 20px;
+                                        }}
+                                        .content {{
+                                            font-size: 16px;
+                                            color: #555555;
+                                            line-height: 1.6;
+                                        }}
+                                        .code {{
+                                            display: block;
+                                            font-size: 20px;
+                                            font-weight: bold;
+                                            color: #1a73e8;
+                                            margin-top: 10px;
+                                            text-align: center;
+                                        }}
+                                        .footer {{
+                                            font-size: 12px;
+                                            color: #aaaaaa;
+                                            text-align: center;
+                                            margin-top: 30px;
+                                        }}
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class='container'>
+                                        <div class='header'>Your Verification Code</div>
+                                        <div class='content'>
+                                            Hello,<br /><br />
+                                            You requested a verification code. Use the code below to proceed:
+                                            <span class='code'>{code}</span>
+                                            <br />
+                                            If you didn't request this, please ignore this email.
+                                        </div>
+                                        <div class='footer'>This is an automated message. Please do not reply.</div>
+                                    </div>
+                                </body>
+                                </html>
+                                ",
                     PlainTextContent = $@"Email: {verificationRequest.Email} Code: {code}",
                 };
+
+                _logger.LogInformation($"EmailRequest created successfully for {verificationRequest.Email} with code {code}.");
                 return emailRequest;
+            }
+            else
+            {
+                _logger.LogWarning("Invalid verification request or code. EmailRequest not generated.");
             }
         }
         catch (Exception ex)

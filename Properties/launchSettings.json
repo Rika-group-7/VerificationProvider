@@ -2,8 +2,7 @@
   "profiles": {
     "VerificationProvider": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7091",
-      "launchBrowser": false
+      "commandLineArgs": "--port 7091 --verbose"
     }
   }
 }
